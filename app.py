@@ -51,6 +51,35 @@ def delete_diet(id_diet):
         return jsonify({'message': f'Dieta {id_diet} removido com sucesso!'})
     return jsonify({'message': f'Dieta não encontrada!'}),404
 
+@app.route('/diets', methods=['GET'])
+def get_all():
+    snacks = Snack.query.all()
+
+    result = []
+    for snack in snacks:
+        result.append({
+            'id': snack.id,
+            'name': snack.name,
+            'description': snack.description,
+            'date': snack.date.isoformat(),
+            'diet': snack.diet
+        })
+    return jsonify(result)
+
+@app.route('/diet/<int:id_diet>', methods=['GET'])
+def get_id(id_diet):
+    snack = Snack.query.get(id_diet)
+
+    if snack:
+        return {
+                'id': snack.id,
+                'name': snack.name, 
+                'description': snack.description,
+                'diet': snack.diet,
+                'date': snack.date.isoformat()
+                }
+    return jsonify({'message': 'Dieta não encontrada!'}), 404
+
 @app.shell_context_processor
 def make_shell_context():
     return {'db': db, 'Snack': Snack}
