@@ -25,6 +25,22 @@ def create_diet():
     
     return jsonify({'message': 'Credenciais inválidas'}), 400
 
+@app.route('/diet/<int:id_diet>', methods=['PUT'])
+def update_diet(id_diet):
+    data = request.json
+    snack = Snack.query.get(id_diet)
+
+    if not snack:
+        return jsonify({'message': 'Dieta não encontrada!'}), 404
+
+    for field in ['name', 'description', 'diet']:
+        if field in data:
+            setattr(snack, field, data[field])
+
+    db.session.commit()
+    return jsonify({'message': f'A Dieta {id_diet} foi atualizada com secesso!'})
+    
+
 @app.shell_context_processor
 def make_shell_context():
     return {'db': db, 'Snack': Snack}
