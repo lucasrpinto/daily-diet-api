@@ -18,7 +18,8 @@ def create_diet():
     description = data.get("description")
 
     if name and description:
-        snack = Snack(name=name, description=description, diet=True)
+        diet = data['diet'] if 'diet' in data else True
+        snack = Snack(name=name, description=description, diet=diet)
         db.session.add(snack)
         db.session.commit()
         return jsonify({'message': 'Dieta cadastrada com sucesso!'}), 201
@@ -40,6 +41,15 @@ def update_diet(id_diet):
     db.session.commit()
     return jsonify({'message': f'A Dieta {id_diet} foi atualizada com secesso!'})
     
+@app.route('/diet/<int:id_diet>', methods=['DELETE'])
+def delete_diet(id_diet):
+    snack = Snack.query.get(id_diet)
+
+    if snack and id_diet:
+        db.session.delete(snack)
+        db.session.commit()
+        return jsonify({'message': f'Dieta {id_diet} removido com sucesso!'})
+    return jsonify({'message': f'Dieta não encontrada!'}),404
 
 @app.shell_context_processor
 def make_shell_context():
